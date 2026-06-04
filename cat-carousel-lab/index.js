@@ -17,7 +17,16 @@ const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
- * - Retrieve a list of breeds from the cat API using fetch().
+    async function initialLoad() {
+ //  Retrieve a list of breeds from the cat API using fetch().
+    
+    const response = await fetch("https://thecatapi.com", {
+    headers: {"x-api-key": API_KEY}});
+    const breads = await response.json();
+    
+  
+    }
+ * 
  * - Create new <options> for each of these breeds, and append them to breedSelect.
  *  - Each option should have a value attribute equal to the id of the breed.
  *  - Each option should display text equal to the name of the breed.
