@@ -22,7 +22,7 @@ async function initialLoad() {
 
   //  Retrieve a list of breeds from the cat API using fetch().
 
-  const response = await fetch("https://api.thecatapi.com/v1/breeds", { headers: { "x-api-key": API_KEY } });
+  const response = await fetch("https://api.thecatapi.com/v1/breeds", { headers: { 'x-api-key': API_KEY } });
   const breeds = await response.json();
   console.log(breeds);
 
@@ -36,56 +36,82 @@ async function initialLoad() {
 
     // Each option should display text equal to the name of the breed.
 
-    option.textcontent = breed.name;
+    option.text = breed.name;
 
     //  This function should execute immediately.
     breedselect.appendChild(option);
 
-  })
+  });
 }
 initialLoad();
+
+//Check the API documentation if you're only getting a single object.
+// For each object in the response array, create a new element for the carousel.
+// Append each of these new elements to the carousel.
+// Use the other data you have been given to create an informational section within the infoDump element.
+//  Be creative with how you create DOM elements and HTML.
+//  Feel free to edit index.html and styles.css to suit your needs, but be careful!
+// Remember that functionality comes first, but user experience and design are important.
+// Each new selection should clear, re-populate, and restart the Carousel.
+//  a call to this function to the end of your initialLoad function above to create the initial carousel.
+
 
 
 
 // 2. Create an event handler for breedSelect that does the following:
 
 breedSelect.addEventListener("change", async (e) => {
-  const breedId = e.target.value;
-  const infoDump = document.getElementById("getFavoritesBtn");
-  // clear previous carousel items and text
-  Carousel.clear();
-  infoDump.innerHTML = "";
-
-  // Retrieve information on the selected breed from the cat API using fetch().
-  // Make sure your request is receiving multiple array items!
-
-  const response = await fetch("http://api.thecatapi.com/v1/breeds/{breed_id}", {
-
-    headers: { "x-api-key": API_KEY }
-
-  });
-  const cats = await response.json();
-  console.log(cats);
-
- // Loop through response array to create and Append each of these new elements to the carousel.
- cats.forEach((cat) => {
-  const item = Carousel.createCarouselItem(cat.url, "Cat Breed Image", cat.id);
-  Carousel.appendCarousel(item);
- })
+      getBreed(e.target.value);
+});
   
 
+async function getBreed(breedId){
+  
+  try{
 
+    Carousel.clear();
+    Carousel.start();
+  //const breedId = e.target.value;
+  const response = await fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}&limit=10`,
+  {
+    headers: {
+      "x-api-key": API_KEY,
+    },
+  });
 
+const pics = await response.json();
+console.log(pics);
+carouselInner.innerHTML = "";
+pics.forEach((img, index) => {
+  const item = document.createElement("div");
+  item.classList.add("carousel-item");
+  if (index === 0) {
+    item.classList.add("active");
+
+  }
+  item.innerHTML = `<img src="${img.url}" width="500" height="600" alt="Cat"/>`;
+  carouselInner.appendChild(item);
 });
- //  Check the API documentation if you're only getting a single object.
- // For each object in the response array, create a new element for the carousel.
- // Append each of these new elements to the carousel.
- // Use the other data you have been given to create an informational section within the infoDump element.
- //  Be creative with how you create DOM elements and HTML.
- //  Feel free to edit index.html and styles.css to suit your needs, but be careful!
- // Remember that functionality comes first, but user experience and design are important.
- // Each new selection should clear, re-populate, and restart the Carousel.
- //  a call to this function to the end of your initialLoad function above to create the initial carousel.
+
+//display cat pics
+  const breedPic = pics[0]?.breeds[0];
+if(breedPic)
+  {
+      infoDump.innerHTML=`<h1>${breedPic.name}</h1>
+                          <p>${breedPic.description}</p>
+                          <p>${breedPic.origin}</p>
+                          <p>${breedPic.temperament}</p>`;
+
+
+}
+  }
+
+catch(error){
+  console.error("Unable to Display:",error);
+}
+
+}
+
 
 
 
